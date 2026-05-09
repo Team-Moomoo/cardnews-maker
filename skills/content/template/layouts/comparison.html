@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>비교형 슬라이드</title>
+  <link rel="stylesheet" href="../../reference/design-tokens.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: var(--font-family);
+      background: var(--background-light);
+    }
+
+    .slide {
+      width: var(--canvas-width);
+      height: var(--canvas-height);
+      display: flex;
+      flex-direction: column;
+      padding: var(--nogo-top) var(--nogo-right) var(--nogo-bottom) var(--nogo-left);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* 슬라이드 1: 훅 (제목 + 부제) — 라이트 배경 */
+    .slide--hook {
+      background: var(--background-light);
+      justify-content: center;
+      gap: 32px;
+    }
+
+    .hook__label {
+      font-size: var(--font-size-caption);
+      color: var(--primary);
+      font-weight: 600;
+      letter-spacing: 0.05em;
+    }
+
+    .hook__title {
+      font-size: var(--font-size-hook);
+      font-weight: 800;
+      color: var(--foreground);
+      line-height: 1.3;
+    }
+
+    .hook__subtitle {
+      font-size: var(--font-size-body);
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* 슬라이드 2~N: 2컬럼 비교 — 라이트 배경 */
+    .slide--comparison {
+      background: var(--background-light);
+      justify-content: center;
+      gap: 40px;
+    }
+
+    .comparison__label {
+      font-size: var(--font-size-caption);
+      color: var(--muted);
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .comparison__grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .comparison__card {
+      background: var(--card);
+      border-radius: var(--border-radius);
+      padding: 48px 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .comparison__card--accent {
+      background: var(--card-accent);
+      border: 2px solid var(--primary);
+    }
+
+    .comparison__card-badge {
+      font-size: var(--font-size-caption);
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .comparison__card--accent .comparison__card-badge {
+      color: var(--primary);
+    }
+
+    .comparison__card-title {
+      font-size: var(--font-size-title);
+      font-weight: 700;
+      color: var(--foreground);
+      line-height: 1.3;
+    }
+
+    .comparison__card-body {
+      font-size: var(--font-size-body);
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* 마지막 슬라이드: 결론 + CTA — 다크 배경 */
+    .slide--conclusion {
+      background: var(--foreground);
+      justify-content: center;
+      gap: 48px;
+    }
+
+    .conclusion__label {
+      font-size: var(--font-size-caption);
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .conclusion__title {
+      font-size: 52px;
+      font-weight: 700;
+      color: #FFFFFF;
+      line-height: 1.4;
+    }
+
+    .conclusion__body {
+      font-size: var(--font-size-body);
+      color: #A1A1AA;
+      line-height: 1.7;
+    }
+
+    .conclusion__cta {
+      background: var(--primary);
+      border-radius: var(--border-radius);
+      padding: 28px 48px;
+      font-size: var(--font-size-body);
+      font-weight: 600;
+      color: #FFFFFF;
+      text-align: center;
+    }
+
+    .conclusion__handle {
+      font-size: var(--font-size-caption);
+      color: rgba(255, 255, 255, 0.5);
+      position: absolute;
+      bottom: var(--nogo-bottom);
+      left: var(--nogo-left);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 슬라이드 1: 훅 -->
+  <div class="slide slide--hook">
+    <span class="hook__label">비교</span>
+    <h1 class="hook__title">슬라이드 제목이<br>여기에 들어갑니다</h1>
+    <p class="hook__subtitle">두 가지를 비교하는<br>부제목이 여기에 들어갑니다.</p>
+  </div>
+
+  <!-- 슬라이드 2: 비교 카드 -->
+  <!-- 2컬럼 비교 시 각 셀 텍스트 최대 40자 권장. 초과 시 상/하 배치로 전환 -->
+  <div class="slide slide--comparison">
+    <span class="comparison__label">비교 포인트</span>
+    <div class="comparison__grid">
+      <div class="comparison__card">
+        <span class="comparison__card-badge">Before</span>
+        <h2 class="comparison__card-title">기존 방식</h2>
+        <p class="comparison__card-body">기존 방식에 대한 설명이 여기에 들어갑니다.</p>
+      </div>
+      <div class="comparison__card comparison__card--accent">
+        <span class="comparison__card-badge">After</span>
+        <h2 class="comparison__card-title">개선된 방식</h2>
+        <p class="comparison__card-body">개선된 방식에 대한 설명이 여기에 들어갑니다.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 마지막 슬라이드: 결론 + CTA -->
+  <div class="slide slide--conclusion">
+    <span class="conclusion__label">결론</span>
+    <h2 class="conclusion__title">결론 메시지가<br>여기에 들어갑니다</h2>
+    <p class="conclusion__body">CTA 전 보조 설명이 여기에 들어갑니다.</p>
+    <div class="conclusion__cta">루바토에서 시작해보세요</div>
+    <span class="conclusion__handle">@rubato</span>
+  </div>
+
+</body>
+</html>

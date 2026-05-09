@@ -1,0 +1,35 @@
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css');
+
+:root {
+  /* 색상 */
+  --primary: #E8654A;
+  --foreground: #111111;
+  --muted: #6B7280;
+  --background-light: #FDFCFB;
+  --background-dark: #111111;
+  --card: #FFFFFF;
+  --card-accent: #FEF3F0;
+  --secondary: #F3F4F6;
+
+  /* 캔버스 규격 */
+  --canvas-width: 1080px;
+  --canvas-height: 1440px;
+
+  /* no-go 존 (인스타 UI 오버레이 영역) */
+  --nogo-top: 120px;
+  --nogo-bottom: 180px;
+  --nogo-left: 50px;
+  --nogo-right: 50px;
+  --safe-width: 980px;
+  --safe-height: 1140px;
+
+  /* 폰트 */
+  --font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-size-hook: 72px;
+  --font-size-title: 44px;
+  --font-size-body: 30px;
+  --font-size-caption: 24px;
+
+  /* 기타 */
+  --border-radius: 16px;
+}

@@ -17,8 +17,9 @@ HTML 슬라이드 제작 전담 에이전트.
 ## 입력
 
 - `{콘텐츠폴더}/{번호}/plan.md` (필수)
-- `marketing/brand/design-tokens.css` — CSS 변수 (색상, 폰트, 캔버스)
-- `marketing/templates/layouts/{레이아웃}.html` — 슬라이드별 레이아웃 HTML
+- `${CLAUDE_PLUGIN_ROOT}/skills/content/reference/design-tokens.css` — CSS 변수 (색상, 폰트, 캔버스)
+- `${CLAUDE_PLUGIN_ROOT}/skills/content/reference/logo.svg` — 클로저 슬라이드용 로고
+- `${CLAUDE_PLUGIN_ROOT}/skills/content/template/layouts/{레이아웃}.html` — 슬라이드별 레이아웃 HTML
 
 ## 출력
 
@@ -34,12 +35,9 @@ HTML 슬라이드 제작 전담 에이전트.
 ## 실행절차
 
 1. plan.md 읽기 (콘텐츠 타입 + 슬라이드별 구조 파악)
-2. plan.md의 슬라이드별 레이아웃 필드 읽기 → `marketing/templates/layouts/{레이아웃}.html` 로드
-3. `marketing/brand/design-tokens.css`를 `<link>`로 참조하는 HTML 생성
-4. 에셋 처리: plan.md 슬라이드에 이미지 힌트 필드(`이미지:`)가 있으면 해당 이미지 삽입
-   - 사진(`photos/`)을 배경으로 쓸 경우: CSS `background-image: url('{경로}')` + 그라데이션 오버레이 자동 적용 (`linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.7))`)
-   - 스크린샷 등 인라인 이미지는 `<img>` 태그로 삽입
-   - `marketing/brand/logo.svg` 파일이 존재하면 슬라이드에 로고 삽입 (파일 없으면 생략)
+2. plan.md의 슬라이드별 레이아웃 필드 읽기 → `${CLAUDE_PLUGIN_ROOT}/skills/content/template/layouts/{레이아웃}.html` 로드
+3. design-tokens.css를 슬라이드 HTML에 적용 — 산출물 경로는 워크스페이스(`content/...`)이므로 플러그인 폴더로의 상대경로가 깨진다. **`${CLAUDE_PLUGIN_ROOT}/skills/content/reference/design-tokens.css`의 내용을 `<style>` 블록으로 인라인** 한다 (Read로 읽어서 그대로 삽입). 레이아웃 템플릿의 `<link rel="stylesheet" href="../../reference/design-tokens.css">` 줄은 인라인 `<style>`로 치환
+4. 클로저 슬라이드에는 `${CLAUDE_PLUGIN_ROOT}/skills/content/reference/logo.svg`를 삽입 (Read로 읽어서 인라인 SVG로 삽입)
 5. 차트 슬라이드가 있으면: Chart.js CDN + chartjs-plugin-datalabels CDN 포함. plan.md의 차트 데이터로 `<canvas>` + Chart.js 스크립트 생성. 브랜드 컬러 적용
    - CDN: `<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>` + `<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>`
    - 반드시 `datalabels` 플러그인 등록: `Chart.register(ChartDataLabels)` — 바/도넛/라인 위에 값을 직접 표시

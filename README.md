@@ -1,112 +1,120 @@
-# team-marketing
+# cardnews-maker
 
-마케팅 콘텐츠 제작을 자동화하는 [Claude Code](https://claude.com/claude-code) 플러그인.
+> **강의 데모용 플러그인.** "Claude Code 스킬 안에 brand reference와 산출물 template을 박아넣어 일관된 결과물을 뽑는 패턴"을 보여주기 위한 예시. 다른 브랜드에 그대로 쓰지 말고 reference·template을 갈아끼울 것.
 
-카드뉴스/릴스 한 편을 만들기 위해 거치는 6단계 — 주제 추천, 리서치, 기획, HTML 슬라이드 제작, PNG 변환, 인스타그램 캡션 — 를 단일 `/content` 스킬과 5개 전담 에이전트로 실행한다.
+카드뉴스 제작을 자동화하는 [Claude Code](https://claude.com/claude-code) 플러그인. 카드뉴스 한 편을 만들기 위해 거치는 5단계를 단일 `/content` 스킬과 4개 전담 에이전트로 실행한다.
 
-- `/content recommend "키워드"` — 보유자료 + 트렌드 기반 주제 추천
-- `/content research "주제"` — 리서치 → `research.md`
-- `/content plan` — 슬라이드 기획안 → `plan.md` (오너 승인 게이트)
-- `/content create` — HTML 슬라이드 → `slides/*.html`
-- `/content render` — PNG 변환 → `output/*.png`
-- `/content caption` — 인스타그램 캡션 → `caption.md`
+| # | 스킬 | 산출물 | 에이전트 |
+|---|------|--------|----------|
+| ① | `/content research "주제"` | `research.md` | researcher |
+| ② | `/content plan` | `plan.md` (오너 승인 게이트) | planner |
+| ③ | `/content create` | `slides/*.html` | maker |
+| ④ | `/content render` | `output/*.png` (1080×1440) | — (Playwright) |
+| ⑤ | `/content caption` | `caption.md` | writer |
+
+## 강의 메시지
+
+스킬을 만들 때 두 가지 종류의 자료를 플러그인 내부에 박을 수 있다:
+
+- **`reference/`** — 가이드/원칙 (브랜드 톤, 디자인 토큰, 조합 가이드 등). 에이전트가 의사결정할 때 참조.
+- **`template/`** — 채워 쓰는 양식 (산출물 양식, 슬라이드 레이아웃 등). 에이전트가 형식을 그대로 따르도록.
+
+사용자 워크스페이스에 잡일을 떠넘기지 말고, 일관된 결과물을 뽑는 데 필요한 자료는 플러그인 안에서 해결한다. 이 플러그인은 그 패턴을 가장 단순한 형태로 보여준다.
 
 ## Installation
 
 ### Marketplace
 
 ```
-/plugin marketplace add Team-Moomoo/team-marketing
-/plugin install team-marketing@team-marketing
+/plugin marketplace add Team-Moomoo/cardnews-maker
+/plugin install cardnews-maker@cardnews-maker
 ```
 
 ### Manually
 
 ```bash
-git clone https://github.com/Team-Moomoo/team-marketing.git \
-  ~/.claude/plugins/team-marketing
+git clone https://github.com/Team-Moomoo/cardnews-maker.git \
+  ~/.claude/plugins/cardnews-maker
 ```
 
-## 사용 시나리오
+## 사용법
 
-### 1) 워크스페이스 준비
+### 산출물이 쌓이는 위치
 
-플러그인은 현재 작업 디렉토리(CWD) 기준으로 `marketing/` 하위에 산출물을 쌓는다. 마케팅 프로젝트 루트에서 실행하는 걸 전제로 한다.
-
-```
-my-project/
-├── marketing/
-│   ├── brand/tone.md            # (선택) 브랜드 톤·보이스
-│   ├── content/
-│   │   └── 2026-05-09-주제명/
-│   │       ├── sources/         # (선택) 오너가 미리 넣어둔 자료
-│   │       ├── research.md      # /content research 산출
-│   │       ├── plan.md          # /content plan 산출
-│   │       ├── slides/*.html    # /content create 산출
-│   │       ├── output/*.png     # /content render 산출
-│   │       └── caption.md       # /content caption 산출
-```
-
-`marketing/brand/tone.md` 가 있으면 추천·기획·캡션 단계에서 일관된 톤을 유지한다. 없어도 동작은 한다.
-
-### 2) 6단계 파이프라인
+플러그인은 CWD의 `content/` 하위에 결과물을 쌓는다. 사용자가 미리 준비할 폴더는 없다.
 
 ```
-⓪ 추천   /content recommend "구독 경제"  → 콘솔 출력 (저장 안 함)
-① 리서치  /content research "구독 경제 5가지 트렌드"
-② 기획   /content plan                  → plan.md  (승인 후 다음 단계)
-③ 제작   /content create
-④ 변환   /content render                → 1080×1440 PNG
-⑤ 캡션   /content caption
+$CWD/
+└── content/
+    └── 2026-05-09-주제명/
+        ├── research.md          # /content research
+        └── 01/
+            ├── plan.md          # /content plan
+            ├── slides/*.html    # /content create
+            ├── output/*.png     # /content render
+            └── caption.md       # /content caption
 ```
 
-각 단계는 직전 단계 산출물을 입력으로 한다. `plan.md`는 **승인 게이트** — 오너가 OK 하기 전 `/content create`를 실행하면 안 된다.
+같은 주제로 다른 시안을 만들면 `02/`, `03/` … 번호 폴더가 늘어난다.
 
-### 3) 자료 수동 투입
+### 5단계 흐름
 
-리서치 전에 오너가 직접 모은 자료(PDF, 캡처, 텍스트 등)를 `sources/` 폴더에 넣어두면 researcher가 먼저 읽고 그 위에 웹 리서치를 보충한다. 사내 데이터·인터뷰·기존 자료를 1차로 활용하고 싶을 때 사용.
+```
+① /content research "구독 경제 5가지 트렌드"   → research.md
+② /content plan                              → 01/plan.md  (승인 게이트)
+③ /content create                            → 01/slides/*.html
+④ /content render                            → 01/output/*.png
+⑤ /content caption                           → 01/caption.md
+```
 
-## 에이전트 (5종)
+각 단계는 직전 단계의 산출물을 입력으로 받는다. `/content plan` 이후에는 오너가 plan.md를 확인·수정한 뒤에 `/content create`로 진행한다.
+
+## 에이전트 (4종)
 
 | 에이전트 | 모델 | 역할 |
 |----------|------|------|
-| recommender | sonnet | 보유자료 + 트렌드 + 갭 분석으로 주제 추천 |
-| researcher | sonnet | 웹 리서치, 팩트/수치 수집 (출처 명시) |
-| planner | opus | 슬라이드 단위 기획·카피 |
-| maker | sonnet | HTML 슬라이드 제작 |
-| writer | sonnet | 인스타그램 캡션 작성 |
+| researcher | sonnet | 주제 키워드 → 웹 리서치 → research.md (template 양식) |
+| planner | opus | research.md → plan.md (tone + 조합 가이드 + plan template 기반) |
+| maker | sonnet | plan.md → 슬라이드 HTML (디자인 토큰 인라인 + 레이아웃 템플릿) |
+| writer | sonnet | plan.md → 인스타그램 캡션 (tone 기반) |
 
 ## 의존성
 
-- **PNG 렌더링**: `/content render`는 Playwright 기반 `scripts/render.js`를 사용. 첫 사용 시 `npx playwright install chromium`이 필요할 수 있다.
+- **PNG 렌더링**: `/content render`는 Playwright 기반 `scripts/render.js`를 사용. 첫 사용 시 CWD에서 `npm install playwright && npx playwright install chromium` 필요.
 
 ## 한계
 
-- 산출물은 인스타그램 카드뉴스(1080×1440) 포맷 기준. 다른 비율은 `scripts/render.js` 인자 조정 필요.
-- 디자인 시스템 토큰은 별도 제공하지 않음 — `marketing/brand/tone.md` + 기획안에서 톤·룩을 정의해야 한다.
-- `marketing/` 디렉토리 컨벤션을 가정한다. 다른 구조에서 쓰려면 스킬 호출 시 경로를 명시해야 한다.
+- 인스타그램 카드뉴스(1080×1440) 포맷 기준. 다른 비율은 `scripts/render.js` 인자 조정 필요.
+- 강의 데모용 — `skills/content/reference/`의 톤/디자인 토큰/로고가 루바토 브랜드로 박혀있다. 다른 브랜드 적용 시 reference 갈아끼우기 필수.
+- 산출물은 항상 CWD의 `content/` 하위에 저장.
 
 ## 구조
 
 ```
 .claude-plugin/
-├── marketplace.json   # 마켓플레이스 메타
-└── plugin.json        # 플러그인 메타
+├── marketplace.json
+└── plugin.json
 agents/
-├── recommender.md
 ├── researcher.md
 ├── planner.md
 ├── maker.md
 └── writer.md
-skills/
-├── content/SKILL.md   # 6단계 파이프라인 진입점
-└── asset/SKILL.md
-hooks/hooks.json
-scripts/render.js      # HTML → PNG 변환
-docs/specs/            # 스킬·에이전트 SSOT
+skills/content/
+├── SKILL.md          # 5단계 파이프라인 진입점 (스킬 SSOT)
+├── reference/        # 가이드/원칙 (planner·writer·maker가 참조)
+│   ├── tone.md             # 브랜드 톤·훅 프레임·AI 트로프 회피
+│   ├── design-tokens.css   # 색상·폰트·캔버스 토큰
+│   ├── logo.svg            # 클로저 슬라이드용 로고
+│   └── comparison.md       # 슬라이드 조합 가이드
+└── template/         # 채워 쓰는 양식
+    ├── research.md         # researcher 산출 양식
+    ├── plan.md             # planner 산출 양식
+    └── layouts/            # 슬라이드 레이아웃 HTML (maker가 base로 사용)
+        └── comparison.html
+scripts/render.js     # HTML → PNG 변환
 ```
 
-자세한 동작은 [skills.md](./docs/specs/skills.md) / [agents.md](./docs/specs/agents.md).
+각 단계 동작은 `skills/content/SKILL.md`에, 에이전트별 역할/제약은 `agents/*.md`에 정의되어 있다.
 
 ## 라이선스
 

@@ -1,16 +1,16 @@
 {
-  "name": "team-marketing",
-  "description": "마케팅 콘텐츠 자동화 파이프라인 — /content recommend → research → plan → create → render → caption 6단계 카드뉴스 제작 자동화.",
+  "name": "cardnews-maker",
+  "description": "카드뉴스 제작 자동화 — /content research → plan → create → render → caption 5단계 파이프라인. 강의 데모용.",
   "owner": {
     "name": "team-moomoo",
     "url": "https://github.com/Team-Moomoo"
   },
   "plugins": [
     {
-      "name": "team-marketing",
+      "name": "cardnews-maker",
       "source": "./",
-      "description": "카드뉴스/릴스용 마케팅 콘텐츠 파이프라인. 추천 → 리서치 → 기획 → HTML 제작 → PNG 변환 → 캡션 작성을 단일 /content 스킬로 실행.",
-      "version": "0.5.0"
+      "description": "카드뉴스용 콘텐츠 파이프라인. 리서치 → 기획 → HTML 제작 → PNG 변환 → 캡션 작성을 단일 /content 스킬로 실행. 강의 데모용 — 브랜드 reference·산출물 template은 플러그인 내장.",
+      "version": "1.0.0"
     }
   ]
 }
