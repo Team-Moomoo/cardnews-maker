@@ -1,0 +1,13 @@
+{
+  "name": "team-marketing",
+  "description": "마케팅 콘텐츠 자동화 파이프라인 — 카드뉴스/릴스 제작. 추천 → 리서치 → 기획 → HTML → PNG → 캡션.",
+  "version": "0.5.0",
+  "author": {
+    "name": "team-moomoo",
+    "url": "https://github.com/Team-Moomoo"
+  },
+  "keywords": ["marketing", "content", "card-news", "instagram", "pipeline"],
+  "license": "MIT",
+  "homepage": "https://github.com/Team-Moomoo/team-marketing",
+  "repository": "https://github.com/Team-Moomoo/team-marketing"
+}
